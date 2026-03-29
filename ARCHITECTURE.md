@@ -14,7 +14,7 @@ This solution follows a clean layered design to keep business rules independent 
 - Deliberate REST semantics (resource-oriented URLs, correct status codes, consistent errors)
 - Strict separation of concerns between API, application logic, domain model, and data access
 - Report engine extensibility through Strategy pattern (`IReportGenerator` per report type)
-- One-command local startup (`dotnet run`) with SQLite migrations applied at startup (skipped in `Testing` for integration tests)
+- One-command local startup (`dotnet run`) with SQLite migrations applied at startup (skipped in `Testing` for integration tests); optional **Development** data seed when the database has no users yet (`DevelopmentDataSeeder`)
 - Interactive API docs via OpenAPI JSON + Scalar (Bearer security scheme for JWT)
 
 ## Decision Log
@@ -33,6 +33,7 @@ Each decision below is intentionally documented for reviewer traceability.
 | Report access | `IReportService` checks project membership when `parameters.projectId` is present, then delegates to `ReportEngine` | Reports cannot be used to aggregate data from projects the user does not belong to. |
 | Auth endpoints | `POST /auth/register`, `POST /auth/login` (no `[Authorize]`) | Clear onboarding and token acquisition; all other controllers require a valid bearer token. |
 | API documentation | Swashbuckle OpenAPI + Scalar at `/scalar`; spec at `/swagger/v1/swagger.json` | Modern explorer UI and standard import path for Postman and similar tools. |
+| Development sample data | `DevelopmentDataSeeder` runs after migrate only in `Development`, skips if any user exists | Gives reviewers and local devs immediate data for reports, membership, and assignee flows without manual setup; never runs in `Testing` or with existing users. |
 | Delete semantics | Soft delete via `IsDeleted` | Preserves historical records and reduces accidental data loss while still hiding deleted data from normal reads. |
 | Project delete behavior | Cascade soft delete to related tasks and project members | Prevents orphaned records and keeps project lifecycle deterministic. |
 | Task updates | Focused endpoints + `PATCH` (`/status`, `/assignee`, and partial task patch) | Matches partial-update intent, reduces over-posting risk, and keeps update operations explicit. |

@@ -10,6 +10,12 @@ dotnet run --project src/TaskManager.API
 
 The API listens on the URLs in `src/TaskManager.API/Properties/launchSettings.json` (default **http://localhost:5068**). The SQLite database (`taskmanager.db`) is created and migrated automatically on first run — no setup required.
 
+In **Development**, if the database has no users yet, a small demo dataset is seeded (two accounts, one project, three tasks). Remove `taskmanager.db` to run the seeder again on next startup.
+
+## API documentation (Scalar)
+
+Interactive docs are served by **[Scalar](https://github.com/scalar/scalar)** at **`/scalar`** (e.g. `http://localhost:5068/scalar` when using the default launch profile). The OpenAPI 2.x document is at **`/swagger/v1/swagger.json`** for importing into Postman or other clients. After you obtain a JWT from `/auth/login` or `/auth/register`, use Scalar’s **Authorize** control and send `Bearer {token}`.
+
 ## Running Tests
 
 ```bash
@@ -36,7 +42,7 @@ Content-Type: application/json
 
 Response body includes `token`, `userId`, `name`, and `email`. Configure signing in `appsettings.json` under `JwtSettings` (replace `Key` in production).
 
-OpenAPI / Scalar: use the **Authorize** / Bearer field with your token.
+Use that token in Scalar’s **Authorize** flow (see **API documentation (Scalar)** above).
 
 ## Configuration & secrets
 
@@ -44,7 +50,8 @@ OpenAPI / Scalar: use the **Authorize** / Bearer field with your token.
 - **JWT keys**: `JwtSettings:Key` values in `appsettings.json`, `appsettings.Development.json`, and `appsettings.Testing.json` are **development/test-only**. For any real deployment:
   - Override `JwtSettings` via **environment variables** or a secrets store (e.g. Azure Key Vault, AWS Secrets Manager, or `dotnet user-secrets`).
   - Never commit production signing keys to git; rotate keys if a real key is ever exposed.
-- **Test passwords**: hard-coded passwords (e.g. `Test123!`, `TestUserPw1!`) live only in test projects to seed users for integration tests and are not used by the running app in production.
+- **Test passwords**: hard-coded passwords (e.g. `Test123!`) live only in test projects to seed users for integration tests and are not used by the running app in production.
+- **Development demo logins** (password `Demo123!` for both): `demo@taskmanager.local` (project owner), `jane@taskmanager.local` (member). Only inserted when the DB is empty and the environment is Development.
 
 ## API Overview
 
