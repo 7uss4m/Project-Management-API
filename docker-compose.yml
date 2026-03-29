@@ -1,0 +1,19 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5068:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      # SQLite file inside the container; persisted via volume below
+      ConnectionStrings__DefaultConnection: "Data Source=/app/data/taskmanager.db"
+      # Override for real deployments, e.g. docker run -e JwtSettings__Key=...
+      # JwtSettings__Key: "replace-with-at-least-32-chars-in-production"
+    volumes:
+      - taskmanager-db:/app/data
+    restart: unless-stopped
+
+volumes:
+  taskmanager-db:

@@ -1,0 +1,17 @@
+**/.git
+**/.vs
+**/.vscode
+**/.cursor
+**/bin
+**/obj
+**/out
+**/publish
+**/*.user
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/taskmanager.db*
+**/TestResults
+**/coverage
+**/mcps
+tests/

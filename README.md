@@ -12,6 +12,18 @@ The API listens on the URLs in `src/TaskManager.API/Properties/launchSettings.js
 
 In **Development**, if the database has no users yet, a small demo dataset is seeded (two accounts, one project, three tasks). Remove `taskmanager.db` to run the seeder again on next startup.
 
+## Docker
+
+Requires [Docker Engine](https://docs.docker.com/engine/) (and Compose V2). From the repository root:
+
+```bash
+docker compose up --build
+```
+
+The API is mapped to **http://localhost:5068** (same port as the default `dotnet run` profile). SQLite lives in a named volume (`taskmanager-db`) at `/app/data/taskmanager.db` inside the container; compose sets `ConnectionStrings__DefaultConnection` accordingly. `ASPNETCORE_ENVIRONMENT` is **Development** so migrations and the demo seeder behave like local runs.
+
+For production, build with the same `Dockerfile`, set `ASPNETCORE_ENVIRONMENT=Production`, override `JwtSettings__Key` (and other secrets) via environment variables or an external secrets store — do not use the committed development JWT key.
+
 ## API documentation (Scalar)
 
 Interactive docs are served by **[Scalar](https://github.com/scalar/scalar)** at **`/scalar`** (e.g. `http://localhost:5068/scalar` when using the default launch profile). The OpenAPI 2.x document is at **`/swagger/v1/swagger.json`** for importing into Postman or other clients. After you obtain a JWT from `/auth/login` or `/auth/register`, use Scalar’s **Authorize** control and send `Bearer {token}`.
