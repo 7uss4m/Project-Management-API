@@ -1,3 +1,4 @@
+using System.Linq;
 using TaskManager.Domain.Enums;
 using TaskManager.Domain.Interfaces;
 
@@ -18,9 +19,17 @@ public class TasksByStatusReport : IReportGenerator
 
         var allTasks = await _tasks.GetAllForProjectAsync(projectId, ct);
 
+        var tasks = allTasks.AsEnumerable();
+        var p = request.Parameters;
+        if (p.DateFrom is { } from)
+            tasks = tasks.Where(t => t.CreatedAt >= from);
+        if (p.DateTo is { } to)
+            tasks = tasks.Where(t => t.CreatedAt <= to);
+        var filtered = tasks.ToList();
+
         var statuses = Enum.GetValues<ProjectTaskStatus>();
         var labels = statuses.Select(s => s.ToString()).ToArray();
-        var data = statuses.Select(s => (decimal)allTasks.Count(t => t.Status == s)).ToArray();
+        var data = statuses.Select(s => (decimal)filtered.Count(t => t.Status == s)).ToArray();
 
         return new ReportResult
         {

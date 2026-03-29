@@ -1,3 +1,4 @@
+using System.Linq;
 using TaskManager.Domain.Enums;
 using TaskManager.Domain.Interfaces;
 
@@ -18,9 +19,17 @@ public class TasksByPriorityReport : IReportGenerator
 
         var allTasks = await _tasks.GetAllForProjectAsync(projectId, ct);
 
+        var tasks = allTasks.AsEnumerable();
+        var p = request.Parameters;
+        if (p.DateFrom is { } from)
+            tasks = tasks.Where(t => t.CreatedAt >= from);
+        if (p.DateTo is { } to)
+            tasks = tasks.Where(t => t.CreatedAt <= to);
+        var filtered = tasks.ToList();
+
         var priorities = Enum.GetValues<Priority>();
         var labels = priorities.Select(p => p.ToString()).ToArray();
-        var data = priorities.Select(p => (decimal)allTasks.Count(t => t.Priority == p)).ToArray();
+        var data = priorities.Select(p => (decimal)filtered.Count(t => t.Priority == p)).ToArray();
 
         return new ReportResult
         {

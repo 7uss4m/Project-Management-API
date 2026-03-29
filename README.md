@@ -38,6 +38,14 @@ Response body includes `token`, `userId`, `name`, and `email`. Configure signing
 
 OpenAPI / Scalar: use the **Authorize** / Bearer field with your token.
 
+## Configuration & secrets
+
+- **Database**: uses local SQLite (`taskmanager.db`) via `ConnectionStrings:DefaultConnection` in `appsettings*.json`. No cloud credentials are stored in the repo.
+- **JWT keys**: `JwtSettings:Key` values in `appsettings.json`, `appsettings.Development.json`, and `appsettings.Testing.json` are **development/test-only**. For any real deployment:
+  - Override `JwtSettings` via **environment variables** or a secrets store (e.g. Azure Key Vault, AWS Secrets Manager, or `dotnet user-secrets`).
+  - Never commit production signing keys to git; rotate keys if a real key is ever exposed.
+- **Test passwords**: hard-coded passwords (e.g. `Test123!`, `TestUserPw1!`) live only in test projects to seed users for integration tests and are not used by the running app in production.
+
 ## API Overview
 
 | Resource | Base URL |
