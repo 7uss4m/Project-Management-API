@@ -22,6 +22,8 @@ docker compose up --build
 
 The API is mapped to **http://localhost:5068** (same port as the default `dotnet run` profile). SQLite lives in a named volume (`taskmanager-db`) at `/app/data/taskmanager.db` inside the container; compose sets `ConnectionStrings__DefaultConnection` accordingly. `ASPNETCORE_ENVIRONMENT` is **Development** so migrations and the demo seeder behave like local runs.
 
+The `api` service includes a **health check** that probes `GET /health/live` inside the container (see the **Health** row in **API Overview**).
+
 For production, build with the same `Dockerfile`, set `ASPNETCORE_ENVIRONMENT=Production`, override `JwtSettings__Key` (and other secrets) via environment variables or an external secrets store — do not use the committed development JWT key.
 
 ## API documentation (Scalar)
@@ -69,6 +71,7 @@ Use that token in Scalar’s **Authorize** flow (see **API documentation (Scalar
 
 | Resource | Base URL |
 |---|---|
+| Health | `GET /health` (all checks), `GET /health/live` (liveness), `GET /health/ready` (DB readiness); no auth required |
 | Auth | `POST /auth/register`, `POST /auth/login` (no auth required) |
 | Users | `GET/POST/PUT/DELETE /users` |
 | Projects | `GET/POST/PUT/DELETE /projects` |

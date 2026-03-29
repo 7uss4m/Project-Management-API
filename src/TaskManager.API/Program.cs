@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using TaskManager.API.Options;
@@ -23,6 +25,10 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
+
+builder.Services.AddHealthChecks()
+    .AddCheck("live", () => HealthCheckResult.Healthy(), tags: ["live"])
+    .AddDbContextCheck<AppDbContext>("database", tags: ["ready"]);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -62,6 +68,17 @@ app.MapScalarApiReference("/scalar", options =>
 });
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = r => r.Tags.Contains("live")
+});
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = r => r.Tags.Contains("ready")
+});
+app.MapHealthChecks("/health");
+
 app.MapControllers();
 
 app.Run();
