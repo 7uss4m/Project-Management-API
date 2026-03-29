@@ -1,0 +1,57 @@
+# Build artifacts
+bin/
+obj/
+**/bin/
+**/obj/
+[Bb]uild/
+[Rr]elease/
+[Dd]ebug/
+# VS / Rider / tooling
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+project.lock.json
+# Global packages are outside repo, but keep this for safety
+# .nuget/packages/
+# Logs
+*.log
+logs/
+*.svclog
+# SQLite database files
+*.db
+*.db-shm
+*.db-wal
+# EF Core Migrations snapshots backup (if any)
+*MigrationsBackup*/
+*.MigrationBackup.cs
+# User secrets / config overrides
+secrets.json
+*.user.json
+# Resharper / Analyzer caches
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+# Coverage / test results
+TestResults/
+coverage*
+*.coverage
+*.coveragexml
+*.trx
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+# Tooling / editor metadata
+.vscode/
+*.swp
+*.swo
+# Cursor & agent artifacts
+.cursor/
